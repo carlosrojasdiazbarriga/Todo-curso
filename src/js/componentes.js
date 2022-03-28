@@ -2,9 +2,11 @@ import {Todo, TodoList} from '../class';
 import {todoList} from '../index';
 
 
-const divTodolist = document.querySelector('.todo-list')
-const txtInput = document.querySelector('.new-todo')
-const btnBorrar = document.querySelector('.clear-completed')
+const divTodolist = document.querySelector('.todo-list');
+const txtInput = document.querySelector('.new-todo');
+const btnBorrar = document.querySelector('.clear-completed');
+const ulFiltros = document.querySelector('.filters');
+const anchorfiltros = document.querySelectorAll('.filtro');
 
 export const crearTodoHtml = (todo) => {
   const htmltodo = 
@@ -31,7 +33,6 @@ export const crearTodoHtml = (todo) => {
 txtInput.addEventListener('keyup',(event) =>{
     if (event.keyCode === 13 && txtInput.value.length > 0) {
         const nuevoTodo = new Todo(txtInput.value);
-        console.log(nuevoTodo)
         todoList.nuevoTodo(nuevoTodo);
         crearTodoHtml(nuevoTodo);
         txtInput.value = '';
@@ -43,6 +44,7 @@ divTodolist.addEventListener('click',(event)=>{
     const nombreElemnto = event.target.localName;
     const todoElemnto = event.target.parentElement.parentElement;
     const todoId = todoElemnto.getAttribute('data-id');
+
 
     if(nombreElemnto.includes('input')){
         todoList.marcarCompletado(todoId);
@@ -60,6 +62,34 @@ btnBorrar.addEventListener('click', ()=>{
 
         if(element.classList.contains('completed')){
             divTodolist.removeChild(element);
+        }
+    }
+});
+
+
+ulFiltros.addEventListener('click', (event) => {
+    const filtro = event.target.text;
+    if(!filtro){return;}
+
+    anchorfiltros.forEach(element => element.classList.remove('selected'));
+    event.target.classList.add('selected');
+
+    for(const element of divTodolist.children){
+        element.classList.remove('hidden');
+        const completado = element.classList.contains('completed');
+
+        switch(filtro){
+            
+            case 'Pendientes':
+                if(completado){
+                    element.classList.add('hidden');
+                }
+            break;
+            case 'Completados':
+                if(!completado){
+                    element.classList.add('hidden');
+                }
+            break;
         }
     }
 });
